@@ -9,5 +9,14 @@
   },
   "peerDependencies": {
     "typescript": "^5"
+  },
+  "prettier": {
+    "printWidth": 100,
+    "useTabs": false,
+    "semi": false,
+    "trailingComma": "none",
+    "experimentalTernaries": true,
+    "experimentalOperatorPosition": "end",
+    "arrowParens": "avoid"
   }
 }
