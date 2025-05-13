@@ -1,30 +1,42 @@
+import { _, never } from "./utils"
+
 export type assert<T extends true> = T
 export function assert<T extends true>(value: T): T {
   return value
 }
 
-export class succ<n> {
-  readonly __tag = "succ"
-  constructor(public prev: n) {}
+export class natural<const tup extends 0[] = any> {
+  readonly __tag = "natural"
+  constructor(public readonly tup: tup) {}
 }
 
-export const zero = 0 as const
+export type succ<value extends natural> =
+  value extends natural<infer tup> ? natural<[...tup, 0]> : never
+export const succ = <const value extends natural>(value: value): succ<value> =>
+  value instanceof natural ? _(new natural([...value.tup, 0])) : never()
+
+export type prev<value extends natural> =
+  value extends natural<[...infer head extends 0[], 0]> ? natural<head> : never
+export const prev = <const value extends natural>(value: value): prev<value> =>
+  value instanceof natural ? _(new natural(value.tup.slice(0, value.tup.length - 1))) : never()
+
+export const zero = new natural([])
 export type zero = typeof zero
 
-export const one = new succ(zero)
+export const one = succ(zero)
 export type one = typeof one
 
-export const two = new succ(one)
+export const two = succ(one)
 export type two = typeof two
 
-export const three = new succ(two)
+export const three = succ(two)
 export type three = typeof three
 
-export const four = new succ(three)
+export const four = succ(three)
 export type four = typeof four
 
-export const five = new succ(four)
+export const five = succ(four)
 export type five = typeof five
 
-export const six = new succ(five)
+export const six = succ(five)
 export type six = typeof six

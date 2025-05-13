@@ -1,44 +1,33 @@
-import { succ } from "./primitives"
+import { succ, natural, zero, prev, two, three } from "./primitives"
 import { _, never } from "./utils"
 
-export type eq<a, b> =
-  a extends 0 ?
-    b extends 0 ?
+export type eq<a extends natural, b extends natural> =
+  a extends zero ?
+    b extends zero ?
       true
     : false
-  : a extends succ<infer APrev> ?
-    b extends succ<infer BPrev> ?
-      eq<APrev, BPrev>
+  : a extends natural ?
+    b extends natural ?
+      eq<prev<a>, prev<b>>
     : false
   : never
 
-export const eq = <a, b>(a: a, b: b): eq<a, b> =>
-  a === 0 ?
-    b === 0 ?
+export const eq = <a extends natural, b extends natural>(a: a, b: b): eq<a, b> =>
+  a === zero ?
+    b === zero ?
       _(true)
     : _(false)
-  : a instanceof succ ?
-    b instanceof succ ?
-      _(eq(a.prev, b.prev))
+  : a instanceof natural ?
+    b instanceof natural ?
+      _(eq(prev(a), prev(b)))
     : _(false)
   : never()
 
-export type add<a, b> =
-  a extends 0 ? b
-  : a extends succ<infer aPrev> ? succ<add<aPrev, b>>
-  : never
+export type add<a extends natural, b extends natural> = natural<[...a["tup"], ...b["tup"]]>
 
-export const add = <a, b>(a: a, b: b): add<a, b> =>
-  a === 0 ? _(b)
-  : a instanceof succ ? _(new succ(add(a.prev, b)))
-  : never()
+export const add = <a extends natural, b extends natural>(a: a, b: b): add<a, b> =>
+  _(new natural([...a["tup"], ...b["tup"]]))
 
-export type toInt<n, acc extends 0[] = []> =
-  n extends 0 ? acc["length"]
-  : n extends succ<infer nPrev> ? toInt<nPrev, [...acc, 0]>
-  : never
+export type toInt<val extends natural> = val["tup"]["length"]
 
-export const toInt = <n>(n: n, acc: 0[] = []): toInt<n> =>
-  n === 0 ? _(acc["length"])
-  : n instanceof succ ? _(toInt(n.prev, [...acc, 0]))
-  : never()
+export const toInt = <const val extends natural>(val: val): toInt<val> => val["tup"]["length"]
