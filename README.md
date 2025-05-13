@@ -1,3 +1,3 @@
 # tean
 
-lean for typescript loving teens
+tean is provably (by tean) the best proof assistant ever
