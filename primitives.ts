@@ -5,22 +5,27 @@ export function assert<T extends true>(value: T): T {
   return value
 }
 
-export class natural<const tup extends 0[] = any> {
+export type NaturalTuple = 0[]
+
+export class Natural<const tup extends NaturalTuple = any> {
   readonly __tag = "natural"
   constructor(public readonly tup: tup) {}
 }
 
-export type succ<value extends natural> =
-  value extends natural<infer tup> ? natural<[...tup, 0]> : never
-export const succ = <const value extends natural>(value: value): succ<value> =>
-  value instanceof natural ? _(new natural([...value.tup, 0])) : never()
+export type succ<value extends Natural> =
+  value extends Natural<infer tup> ? Natural<[...tup, 0]> : never
+export const succ = <const value extends Natural>(value: value): succ<value> =>
+  value instanceof Natural ? _(new Natural([...value.tup, 0])) : never()
 
-export type prev<value extends natural> =
-  value extends natural<[...infer head extends 0[], 0]> ? natural<head> : never
-export const prev = <const value extends natural>(value: value): prev<value> =>
-  value instanceof natural ? _(new natural(value.tup.slice(0, value.tup.length - 1))) : never()
+export type prev<value extends Natural> =
+  value extends Natural<[...infer head extends NaturalTuple, 0]> ? Natural<head>
+  : never
+export const prev = <const value extends Natural>(value: value): prev<value> =>
+  value instanceof Natural ?
+    _(new Natural(value.tup.slice(0, value.tup.length - 1)))
+  : never()
 
-export const zero = new natural([])
+export const zero = new Natural([])
 export type zero = typeof zero
 
 export const one = succ(zero)
