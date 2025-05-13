@@ -1,4 +1,4 @@
-import { succ, Natural, zero, prev, two, three } from "./primitives"
+import { Natural, prev, zero } from "./primitives"
 import { _, never } from "./utils"
 
 export type eq<a extends Natural, b extends Natural> =
