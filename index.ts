@@ -2,6 +2,9 @@
 // https://code.lol/post/programming/variadic-hkt-composition/
 
 import * as Math from "./math"
-import { Three, Six } from "./primitives"
+import { one, two, three, four, five, six, zero } from "./primitives"
+import { check } from "./utils"
 
-const result = Math.Eq(Math.Add(Three, Three), Six)
+check(Math.eq(Math.add(six, zero), Math.add(one, five)))
+check(Math.eq(one, Math.add(one, four)))
+check(Math.eq(six, Math.add(one, five)))

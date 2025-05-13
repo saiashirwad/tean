@@ -1,23 +1,34 @@
-export abstract class HKT {
+export abstract class hkt {
   readonly arg?: unknown
   fn!: (...x: never[]) => unknown
 }
-export type Assume<T, U> = T extends U ? T : U
-export type Apply<F extends HKT, arg> = ReturnType<
+
+export type assume<T, U> = T extends U ? T : U
+export type apply<F extends hkt, arg> = ReturnType<
   (F & { readonly arg: arg })["fn"]
 >
 
-export type Compose<HKTs extends HKT[], X> =
+export type reverse<T extends unknown[]> =
+  T extends [] ? []
+  : T extends [infer U, ...infer Rest] ? [...reverse<Rest>, U]
+  : never
+
+export type reduce<HKTs extends hkt[], X> =
   HKTs extends [] ? X
   : HKTs extends [infer Head, ...infer Tail] ?
-    Apply<Assume<Head, HKT>, Compose<Assume<Tail, HKT[]>, X>>
+    apply<assume<Head, hkt>, reduce<assume<Tail, hkt[]>, X>>
   : never
 
-export type Reverse<T extends unknown[]> =
-  T extends [] ? []
-  : T extends [infer U, ...infer Rest] ? [...Reverse<Rest>, U]
-  : never
-
-export interface Flow<HKTs extends HKT[]> extends HKT {
-  fn: (x: this["arg"]) => Compose<Reverse<HKTs>, this["arg"]>
+export interface compose<HKTs extends hkt[]> extends hkt {
+  fn: (x: this["arg"]) => reduce<HKTs, this["arg"]>
 }
+
+interface doubleString extends hkt {
+  fn: (x: assume<this["arg"], string>) => `${typeof x}${typeof x}`
+}
+
+interface append<S extends string> extends hkt {
+  fn: (x: assume<this["arg"], string>) => `${typeof x}${S}`
+}
+
+type sd = apply<doubleString, "hi"> // "hihi"

@@ -1,45 +1,44 @@
-import { False, Succ, True, Zero } from "./primitives"
-import { _, Never } from "./utils"
+import { succ } from "./primitives"
+import { _, never } from "./utils"
 
-export type Add<A, B> =
-  A extends Zero ? B
-  : A extends Succ<infer N> ? Succ<Add<N, B>>
+export type eq<a, b> =
+  a extends 0 ?
+    b extends 0 ?
+      true
+    : false
+  : a extends succ<infer APrev> ?
+    b extends succ<infer BPrev> ?
+      eq<APrev, BPrev>
+    : false
   : never
 
-export type Eq<A, B> =
-  A extends Zero ?
-    B extends Zero ?
-      True
-    : False
-  : B extends Zero ? False
-  : A extends Succ<infer NA> ?
-    B extends Succ<infer NB> ?
-      Eq<NA, NB>
-    : False
-  : False
+export const eq = <a, b>(a: a, b: b): eq<a, b> =>
+  a === 0 ?
+    b === 0 ?
+      _(true)
+    : _(false)
+  : a instanceof succ ?
+    b instanceof succ ?
+      _(eq(a.prev, b.prev))
+    : _(false)
+  : never()
 
-export const Add = <A, B>(a: A, b: B): Add<A, B> =>
-  a instanceof Zero ? _(b)
-  : a instanceof Succ ? _(new Succ(Add(a.prev, b)))
-  : Never()
-
-export const Eq = <A, B>(A: A, B: B): Eq<A, B> =>
-  A instanceof Zero ?
-    B instanceof Zero ?
-      _(new True())
-    : _(new False())
-  : A instanceof Succ ?
-    B instanceof Succ ?
-      _(Eq(A.prev, B.prev))
-    : _(new False())
-  : Never()
-
-type ToInt<N> =
-  N extends Zero ? 0
-  : N extends Succ<infer Prev> ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10][ToInt<Prev>]
+export type add<a, b> =
+  a extends 0 ? b
+  : a extends succ<infer aPrev> ? succ<add<aPrev, b>>
   : never
 
-const ToInt = <N>(n: N): ToInt<N> =>
-  n instanceof Zero ? _(0 as any)
-  : n instanceof Succ ? _((ToInt(n.prev) + 1) as any)
-  : Never()
+export const add = <a, b>(a: a, b: b): add<a, b> =>
+  a === 0 ? _(b)
+  : a instanceof succ ? _(new succ(add(a.prev, b)))
+  : never()
+
+export type toInt<n, acc extends 0[] = []> =
+  n extends 0 ? acc["length"]
+  : n extends succ<infer nPrev> ? toInt<nPrev, [...acc, 0]>
+  : never
+
+export const toInt = <n>(n: n, acc: 0[] = []): toInt<n> =>
+  n === 0 ? _(acc["length"])
+  : n instanceof succ ? _(toInt(n.prev, [...acc, 0]))
+  : never()

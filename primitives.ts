@@ -1,39 +1,30 @@
-export class True {
-  readonly __tag = "True"
-}
-
-export class False {
-  readonly __tag = "False"
-}
-
-export type AssertTrue<T extends True> = T
-export function AssertTrue<T extends True>(value: T): T {
+export type assert<T extends true> = T
+export function assert<T extends true>(value: T): T {
   return value
 }
 
-export class Zero {
-  readonly __tag = "Zero"
+export class succ<n> {
+  readonly __tag = "succ"
+  constructor(public prev: n) {}
 }
 
-export class Succ<N> {
-  readonly __tag = "Succ"
-  constructor(public prev: N) {}
-}
+export const zero = 0 as const
+export type zero = typeof zero
 
-export const One = new Succ(new Zero())
-export type One = typeof One
+export const one = new succ(zero)
+export type one = typeof one
 
-export const Two = new Succ(One)
-export type Two = typeof Two
+export const two = new succ(one)
+export type two = typeof two
 
-export const Three = new Succ(Two)
-export type Three = typeof Three
+export const three = new succ(two)
+export type three = typeof three
 
-export const Four = new Succ(Three)
-export type Four = typeof Four
+export const four = new succ(three)
+export type four = typeof four
 
-export const Five = new Succ(Four)
-export type Five = typeof Five
+export const five = new succ(four)
+export type five = typeof five
 
-export const Six = new Succ(Five)
-export type Six = typeof Six
+export const six = new succ(five)
+export type six = typeof six
